@@ -2,6 +2,34 @@ let express = require("express");
 let app = express();
 let bodyParser = require("body-parser");
 let assignment = require("./routes/assignments");
+let login = require("./routes/login");
+
+let test= require("./routes/test_login"); //testaa
+
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+
+const secretKey = 'your-secret-key'; // besoin de mettre en .env A regler plus tard et a changer
+const tokenExpiration = '1h';
+// Middleware function to verify JWT token
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1];
+  console.log(token);
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      console.error(err)
+      return res.status(403).json({ message: 'Failed to authenticate token' });
+    }
+
+    req.user = decoded;
+    next();
+  });
+};
+
 
 let mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
@@ -41,7 +69,7 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   next();
 });
-
+app.use(cors());
 // Pour les formulaires
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -61,6 +89,14 @@ app
   .route(prefix + "/assignments/:id")
   .get(assignment.getAssignment)
   .delete(assignment.deleteAssignment);
+
+app
+  .route(prefix + "/login")
+  .post(login.login);
+
+app
+  .route(prefix + "/test")
+  .get(verifyToken,test.getOK);
 
 // On démarre le serveur
 app.listen(port, "0.0.0.0");
