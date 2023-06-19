@@ -2,34 +2,31 @@ let express = require("express");
 let app = express();
 let bodyParser = require("body-parser");
 let assignment = require("./routes/assignments");
-let login = require("./routes/login");
+let auth = require("./routes/auth");
+let test = require("./routes/test_login");
 
-let test= require("./routes/test_login"); //testaa
+const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
+const secretKey = "your-secret-key"; // besoin de mettre en .env A regler plus tard et a changer
 
-const secretKey = 'your-secret-key'; // besoin de mettre en .env A regler plus tard et a changer
-const tokenExpiration = '1h';
 // Middleware function to verify JWT token
 const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization.split(' ')[1];
+  const token = req.headers.authorization.split(" ")[1];
   console.log(token);
   if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
+    return res.status(401).json({ message: "No token provided" });
   }
 
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
-      console.error(err)
-      return res.status(403).json({ message: 'Failed to authenticate token' });
+      console.error(err);
+      return res.status(403).json({ message: "Failed to authenticate token" });
     }
-
     req.user = decoded;
     next();
   });
 };
-
 
 let mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
@@ -79,6 +76,13 @@ let port = process.env.PORT || 8010;
 // les routes
 const prefix = "/api";
 
+//authentication
+app.route(prefix + "/signIn").post(auth.signIn);
+app.route(prefix + "/login").post(auth.login);
+
+//get user information
+app.route(prefix + "/test").get(verifyToken, test.getOK);
+
 app
   .route(prefix + "/assignments")
   .get(assignment.getAssignments)
@@ -89,14 +93,6 @@ app
   .route(prefix + "/assignments/:id")
   .get(assignment.getAssignment)
   .delete(assignment.deleteAssignment);
-
-app
-  .route(prefix + "/login")
-  .post(login.login);
-
-app
-  .route(prefix + "/test")
-  .get(verifyToken,test.getOK);
 
 // On démarre le serveur
 app.listen(port, "0.0.0.0");

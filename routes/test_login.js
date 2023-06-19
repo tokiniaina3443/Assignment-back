@@ -1,5 +1,5 @@
 function getOK(req, res) {
-    res.json({message:req.user});
+  res.json(req.user);
 }
 
 module.exports = { getOK };
