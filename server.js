@@ -2,6 +2,7 @@ let express = require("express");
 let app = express();
 let bodyParser = require("body-parser");
 let assignment = require("./routes/assignments");
+let matiere = require("./routes/matiere");
 let auth = require("./routes/auth");
 let test = require("./routes/test_login");
 
@@ -93,6 +94,16 @@ app
   .route(prefix + "/assignments/:id")
   .get(assignment.getAssignment)
   .delete(assignment.deleteAssignment);
+
+app
+  .route(prefix + "/matieres")
+  .get(matiere.getAllMatieres)
+  .post(matiere.postMatiere);
+
+app
+  .route(prefix + "/matieres/:id")
+  .get(matiere.getMatiere)
+
 
 // On démarre le serveur
 app.listen(port, "0.0.0.0");

@@ -1,4 +1,4 @@
-let User = require("../model/user.");
+let User = require("../model/user");
 
 const jwt = require("jsonwebtoken");
 const secretKey = "your-secret-key";
@@ -28,7 +28,7 @@ function login(req, res) {
     } else {
       if (result) {
         const user = {
-          id: result.id,
+          id: result._id,
           name: result.name,
           username: result.username,
           role: result.role,
@@ -38,7 +38,7 @@ function login(req, res) {
         });
         res.json({ token });
       } else {
-        res.status(401).send("Unauthorized");
+        res.json({ action: "erreur" });
       }
     }
   });
