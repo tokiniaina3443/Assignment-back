@@ -24,18 +24,22 @@ function login(req, res) {
   const password = req.body.password;
   User.findOne({ username: username, password: password }, (err, result) => {
     if (err) {
-      res.status(401).send("Unauthorized");
+      res.status(500).send("server error");
     } else {
-      const user = {
-        id: result.id,
-        name: result.name,
-        username: result.username,
-        role: result.role,
-      };
-      const token = jwt.sign(user, secretKey, {
-        expiresIn: tokenExpiration,
-      });
-      res.json({ token });
+      if (result) {
+        const user = {
+          id: result.id,
+          name: result.name,
+          username: result.username,
+          role: result.role,
+        };
+        const token = jwt.sign(user, secretKey, {
+          expiresIn: tokenExpiration,
+        });
+        res.json({ token });
+      } else {
+        res.status(401).send("Unauthorized");
+      }
     }
   });
 }
