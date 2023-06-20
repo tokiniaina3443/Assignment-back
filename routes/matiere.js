@@ -11,9 +11,9 @@ function getAllMatieres(req, res) {
 }
 // Récupérer un matieres par son id (GET)
 function getMatiere(req, res) {
-    let matieresId = req.params.id;
+    let matieresId = req.params._id;
   
-    Matiere.findOne({ id: matieresId }, (err, matiere) => {
+    Matiere.findOne({ _id: matieresId }, (err, matiere) => {
       if (err) {
         res.send(err);
       }
