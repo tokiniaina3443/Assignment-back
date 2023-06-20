@@ -1,4 +1,4 @@
-let User = require("../model/user.");
+let User = require("../model/user");
 
 const jwt = require("jsonwebtoken");
 const secretKey = "your-secret-key";
