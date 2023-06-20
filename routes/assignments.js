@@ -1,4 +1,5 @@
 let Assignment = require("../model/assignment");
+const Matiere = require('../model/matiere');
 
 // Récupérer tous les assignments (GET)
 // Récupérer tous les assignments (GET)
@@ -19,7 +20,31 @@ function getAssignments(req, res) {
     }
   );
 }
+async function getAssignmentsLeftJoin(req, res) {
+  try {
+    const assignments = await Assignment.aggregate([
+      {
+        $lookup: {
+          from: 'matieres',
+          localField: 'matiere',
+          foreignField: '_id',
+          as: 'matieres'
+        }
+      },
+      {
+        $unwind: {
+          path: '$matieres',
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ]);
 
+    res.json(assignments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 function getAssignmentsOld(req, res) {
   Assignment.find((err, assignments) => {
     if (err) {
@@ -102,4 +127,5 @@ module.exports = {
   getAssignment,
   updateAssignment,
   deleteAssignment,
+  getAssignmentsLeftJoin,
 };

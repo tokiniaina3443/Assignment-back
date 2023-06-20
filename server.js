@@ -90,6 +90,8 @@ app
   .post(assignment.postAssignment)
   .put(assignment.updateAssignment);
 
+app.route(prefix + "/assignmentsJoined").get(assignment.getAssignmentsLeftJoin);
+
 app
   .route(prefix + "/assignments/:id")
   .get(assignment.getAssignment)
