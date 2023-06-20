@@ -5,7 +5,8 @@ let Schema = mongoose.Schema;
 
 let AssignmentSchema = Schema({
   id: Number,
-  dateDeRendu: Date,
+  dateDeRendu: Date, // normal
+  dateReelDeRendu: Date, // normal
   nom: String,
   auteur: String, //Nom eleve
   matiere: String, //_id Matiere
